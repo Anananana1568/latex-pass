@@ -1,0 +1,960 @@
+%                                                                 aa.dem
+% AA vers. 9.1, LaTeX class for Astronomy & Astrophysics
+% demonstration file
+%                                                       (c) EDP Sciences
+%-----------------------------------------------------------------------
+%
+\documentclass{aa} 
+%\documentclass[referee]{aa} % for a referee version
+%\documentclass[onecolumn]{aa} % for a paper on 1 column  
+%\documentclass[longauth]{aa} % for the long lists of affiliations 
+%\documentclass[letter]{aa} % for the letters 
+%\documentclass[bibyear]{aa} % if the references are not structured 
+%                              according to the author-year natbib style
+
+%
+\usepackage{graphicx}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{txfonts}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\usepackage[options]{hyperref}
+% To add links in your PDF file, use the package "hyperref"
+% with options according to your LaTeX or PDFLaTeX drivers.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% my usepackage %%
+\usepackage{multicol}
+\usepackage{multirow}
+\usepackage{lscape}
+\usepackage{adjustbox}
+\usepackage{graphicx}
+\usepackage{hyperref}   %call hyperlink pakage
+\hypersetup{
+    colorlinks=true,
+   linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+%    pdftitle={Overleaf Example},
+%    pdfpagemode=FullScreen,
+    }
+%
+ 
+\usepackage{amsmath,amssymb}
+\usepackage{changepage}
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document} 
+
+   \title{Density calculations of NGC 3783 warm absorbers using a time-dependent photoionization model}
+
+   %\subtitle{}
+
+   \author{Chen Li
+          \inst{1, 2}
+          %\fnmsep\thanks
+          \and
+          Jelle S. Kaastra\inst{1, 2}
+          \and
+          Liyi Gu\inst{2, 1}
+          \and
+          Missagh Mehdipour\inst{3}
+          }
+
+   \institute{Leiden Observatory, Leiden University,
+              P.O.Box 9513, 2300 RA Leiden, The Netherlands\\
+              \email{cli@strw.leidenuniv.nl}
+         \and
+             SRON Netherlands Institute for Space Research,  Niels Bohrweg 4, 2333 CA Leiden, The Netherlands 
+             %\email{c.ptolemy@hipparch.uheaven.space}
+        \and
+            Space Telescope Science Institute, 3700 San Martin Drive, Baltimore, MD 21218, USA
+             }
+
+   \date{}
+
+% \abstract{}{}{}{}{} 
+% 5 {} token are mandatory
+ 
+  \abstract
+  % context heading (optional)
+  % {} leave it empty if necessary  
+  {
+Outflowing wind as one type of AGN feedback, which involves noncollimated ionized winds prevalent in Seyfert-$1$ AGNs, impacts their host galaxy by carrying kinetic energy outwards.
+However, the distance of the outflowing wind is poorly constrained due to a lack of direct imaging observations, which limits our understanding of their kinetic power and therefore makes the impact on the local galactic environment unclear.  
+One potential approach involves a determination of the density of the ionized plasma, making it possible to derive the distance using the ionization parameter $\xi$, which can be measured based on the ionization state.
+Here, by applying a new time-dependent photoionization model, \texttt{tpho}, in SPEX, we define a new approach, the \texttt{tpho}-delay method, to calculate/predict a detectable density range for warm absorbers of NGC $3783$.
+The \texttt{tpho} model solves self-consistently the time-dependent ionic concentrations, which enables us to study delayed states of the plasma in detail.
+%The source ionizing luminosity and the warm absorbers parameters obtained from previous data, together with the light curve derived from the power spectrum, were fed into the TPHO simulation. 
+We show that it is crucial to model the non-equilibrium effects accurately for the delayed phase, where the non-equilibrium and equilibrium models diverge significantly.
+Finally, we calculate the crossing time to consider the effect of the transverse motion of the outflow on the intrinsic luminosity variation.
+It is expected that future spectroscopic observations with more sensitive instruments will provide more accurate constraints on the outflow density, and thereby on the feedback energetics.
+}
+
+  \keywords{X-rays: galaxies �C galaxies: active �C galaxies: Seyfert �C galaxies: individual: NGC $3783$ }
+  \titlerunning{TPHO simulation of NGC~3783 X-ray warm absorbers}
+  \authorrunning{C. Li et al.}
+  
+  \maketitle  
+%
+%-------------------------------------------------------------------
+
+%\tableofcontents      %the table of contents
+
+
+
+
+\section{Introduction}\label{introduction}
+
+Outflows from Active galactic nuclei (AGNs) have been found to carry significant kinetic energy, and thereby impact their host galaxy in a cosmic feedback mechanism, which usually shows imprint on the absorption spectrum in the UV and/or X-ray wavelength band \citep{Laha2021NatAs}.
+
+With the assumption of spherical outflow \citep{Blustin2005A&A}, the mass outflow rate can be estimated via
+
+where the factor 1.23 takes into account the cosmic elemental abundances, $m_{p}$ is the mass of a proton, $n(r)$ is the density of the outflow at radius $r$, $C_{v}(r)$ is the volume filling factor as a function of distance and $\Omega$ is the solid angle subtended by the outflow.
+Subsequently, the kinetic luminosity \( L_{\rm KE} = \frac{1}{2} \dot{M}_{\rm out} v_{\rm out}^{2} \) can be derived.
+From the spectral fitting of absorption lines/edges in UV/optical and X-rays, one obtains the ionization parameter ($\xi$), the column density ($N_{\rm H}$) which rely on $C_{v}(r)$ together with $\Omega$, and the outflow velocity ($v_{\rm out}$).
+However, the lack of spatial resolution in the inner parsec of the central engines, makes it difficult to view these flows directly, further impeding us to measure the impact of AGN feedback.
+
+
+The ionization parameter (\citealp{Tarter1969ApJ}; \citealp{Krolik1981ApJ}) conveniently quantifies the ionization status of the outflows photoionized by the intense radiation from the accretion-driven central source, which is defined as:
+
+where $L_{\rm ion}$ is the $1<<MATH_FORMULA_514>>1000 \rm \, Ryd$ (or $\rm 13.6 \, eV$�C$\rm 13.6 \, keV$) band luminosity of the ionizing source, $n_{\rm H}$ the hydrogen number density of the ionized plasma, and $r$ the distance of the plasma to the ionizing source.
+Therefore, the distances can be constrained indirectly through the measurements of ionization parameter, ionizing luminosity, and density.
+
+
+Up to now, assessing the density of the outflow accurately remains challenging.
+One approach is to use density sensitive lines from a spectral analysis.
+The He-like triplet emission lines \citep{Porquet2010SSR} and the absorption lines from the metastable levels \citep{Arav2015AA}, among many other transitions, are considered to have a sensitivity to density.
+\cite{Mao2017A&A} explored the density diagnostics through the use of the metastable absorption lines of Be-, B-, and C- like ions for the AGN outflows, and found that in the same isoelectronic sequence, different ions cover not only a wide range of ionization parameters but also an extensive density range.
+Less ionized ions probe lower density and smaller ionization parameters within the same isonuclear sequence \citep{Mao2017A&A}.
+The implementation of this method requires high-quality spectroscopic data of the outflows.
+
+
+An alternative approach, spectral-timing analysis, mainly focuses on the variability of ionizing luminosity, involving investigating the changes in the outflows over time which can be a density-dependent response to the variation in the ionizing luminosity (\citealp{Kaastra2012A&A}; \citealp{Rogantini2022ApJ}).
+How fast the ionized plasma responds is dependent on the comparison of recombination timescale and variability of the ionizing source.
+Warm absorber (hereafter, WA) as one kind of outflowing wind, can be studied using this technique.
+Through observations, it has been established that the response of WA to the continuum change provides valuable insight into the origin and acceleration mechanisms of WA \citep{Laha2021NatAs}. 
+%Solely following the anti-correlated between recombination timescale and electron density, 
+\cite{Ebrero2016A&A} estimated the lower limits on the density of WA of NGC $5548$ with long-term variability using the photoionization code Cloudy \citep{Ferland1998PASP}. 
+Time-dependent photoionization modelling has been applied to Mrk $509$ \citep{Kaastra2012A&A} and NGC $4051$ \citep{Silva2016A&A}, respectively, to constrain the density of WAs.
+It has been shown that the equilibrium model might become insufficient when it comes to detailed diagnostics of the outflows.
+The non-equilibrium model is needed to interpret high-quality data including those obtained from future missions such as Athena (\citealp{Sadaula2022arXiv}; \citealp{Juranova2022MNRAS}).
+
+
+
+Recently, \cite{Rogantini2022ApJ} build up a new time-dependent photoionization model, \texttt{tpho}, which performs a self-consistent calculation solving the full time-dependent ionization state for all ionic species and therefore allows investigating time-dependent ionic concentrations. 
+The \texttt{tpho} model keeps the SED shape constant, while the luminosity is able to be changed by following the input light curve variation.
+In this paper, we apply this method with a realistic example of an AGN.
+
+
+NGC 3783, with redshift $z=0.009730$ \citep{Theureau1998A&AS}, hosts one of the most luminous local AGNs, with a bolometric AGN luminosity off log $L_{\rm AGN} \sim  44.5 \, \rm erg \, \rm s^{-1}$ at a distance of $38.5$ Mpc \citep{Davies2015ApJ} as well as hosting a supermassive black hole of $M_{\rm BH} = 3 \times 10^7 M_{\sun}$ (\citealp{Vestergaard2006ApJ}), and has been studied extensively, most notably for its ionised outflows (especially X-ray warm absorbers) and variability. 
+%The X-ray-warm absorber was initially modelled by \cite{Netzer2003ApJ}, and now 
+In the X-ray band, $10$ photoionized components have been found (\citealp{Mehdipour2017A&A}; \citealp{Mao2019A&A}).
+%which can provide good WAs parameters to study time-dependent photoionization process.
+The spectral energy distribution (hereafter, SED) measured by \cite{Mehdipour2017A&A} and power spectral density (hereafter, PSD) shape derived by \cite{Markowitz2005ApJ}, both in the unobscured state of NGC $3783$, give us realistic parameters to feed the \texttt{tpho} model. 
+%In the obscured state, the X-ray obscurer in NGC 3783 varies on short timescales ranging between about one hour and ten hours \citep{DeMarco2020A&A}.
+%Q1: ???Here we need note above sentence, it will be affect our calculation or not?
+
+
+
+In this study, we execute time-dependent photoionization calculations using the \texttt{tpho} model \citep{Rogantini2022ApJ} in SPEX version $3.07.01$ \citep{kaastra2022} and adopt a realistic SED with variability as well as ionization parameters of $10$ WA components of NGC $3783$ based on previous observations (\citealp{Markowitz2005ApJ};  \citealp{Mehdipour2017A&A}; \citealp{Mao2019A&A}).
+In Section \ref{sect:2}, we reproduce the measured SED and present the simulated light curve.
+In Section \ref{sect:3}, we show \texttt{tpho} calculation results and execute a cross-correlation function to quantify the density-dependent lag, as well as compare \texttt{tpho} with \texttt{pion} (photoionization equilibrium model in SPEX).
+In Section \ref{sect:4} and Section \ref{sect:5}, we discuss and conclude our current work.
+
+
+
+
+
+
+%--------------------------------------------------------------------
+\section{Method}\label{sect:2}
+
+
+We first produce a representative SED based on previous measurements, and simulate a realistic light curve corresponding to the PSD shape for NGC $3783$.
+%After 10 WAs was choose as target, we then execute TPHO calculation and therefore get the interpolation $\xi$ which varies as the luminosity of the input light curve going up/down (i.e. following the Eq. \ref{equ:xi defination}) but
+We assume that the shape of the SED stays the same during the variations.
+The \texttt{tpho} model calculates the evolution of ionic concentration for all available elements and all components of the WA.
+Finally, we convert the ion concentration variation to the change of average charge states.
+
+
+
+\subsection{Modelling the NGC 3783 SED}\label{subsect:sed}
+
+We adopt the parameterized unobscured SED model of NGC $3783$ determined by \cite{Mehdipour2017A&A} for the unobscured state from $2000-2001$ mainly based on the archival data taken by XMM-Newton ($2000$ and $2001$) and Chandra HETGS ($2000$, $2001$).
+
+%They used all archival XMM-Newton data (2000 and 2001) and Chandra HETGS data (2000, 2001, 2013) to produce a set of time-averaged spectra, and also provided better constrain of the 9 WAs photonized feature from these data (\citealp{Mao2019A&A}).
+%All the archived unobscured data they used include X-ray and UV band and others (the part of references see \citealp{Kaspi2002ApJ}; \citealp{Blustin2002A&A}; \citealp{Behar2003ApJ}; \citealp{Scott2014ApJ}) to produce a set of time-averaged spectra. 
+
+This model 
+%used by \cite{Mehdipour2017A&A} (see their paper's section 3 for the detail) 
+has a SED consisting of an optical/UV thin disk component, an X-ray power-law continuum, a neutral X-ray reflection component, and a warm Comptonization component for the soft X-ray excess (Figure \ref{fig:sed}). 
+%The exponential cut-off energy of the power law was set to 340 keV \citep{DeRosa2002A&A}, which is also consistent with the NuSTAR spectra. 
+%The Galactic X-ray absorption is modelled using the \emp{hot} model in SPEX, with $N_H = 9.59 \times 10^{20} \rm cm^{-2}$ \citep{Murphy1996ApJS}.
+%The redshift of NGC 3783 is set to 0.009730 \citep{Theureau1998A&AS}, and all abundances are fixed to the proto-solar values of \cite{Lodders2009LanB}.
+%To correct for Galactic reddening, they used the \emp{ebv} model, with E(B - V) = 0.107 \citep{Schlafly2011ApJ}.
+%To take into account the host galaxy optical/UV stellar emission, they used the galactic bulge model of \cite{Kinney1996ApJ}, and normalised it to the NGC 3783 host galaxy flux measured from HST \citep{Bentz2013ApJ}.
+%In the ?? diameter circular aperture of OM, this is $7.04 \times 10^{-15} \rm erg cm^{-2} s^{-1} A^{-1}$ (Bentz, priv.comm.)???.
+%For more details of the SED model, we advice you to refer to Section 3 of \cite{Mehdipour2017A&A}'s paper.
+%To calculate the WA variability, we applied the source flux at the location of the photoionized matter, not the spectrum received at Earth. 
+%Hence, we reset the distance to SPEX default value of $1\times 10^{22}$ m and normalising the SED model by $4 \times \pi $ then we get the properly scaled SED with true luminosity rather than the flux at Earth. 
+%Figure \ref{fig:sed} shown our simulated unobscured SED of NGC 3783 within the energy range from $\rm 10^{-3} - 10^{8}$ \textcolor{red}{Angstrom}.
+
+
+%===========================
+% Fig: ngc 3783 sed
+%It means, when using TPHO, we should adjust tbin to estimate different density, especially low density.
+
+%===========================
+
+
+
+%---------------------------------------------------------------
+\subsection{Source simulated light curve}\label{subsect:lc}
+%
+We use a doubly broken power spectral density (PSD, see Eq. \ref{equ:psd}) model to simulate the NGC $3783$ light curve \citep{Markowitz2005ApJ},
+
+
+where $A_l$ is the PSD amplitude below the low-frequency break $f_l = 2 \times 10^{-7}$ Hz, here the PSD has zero slopes. 
+$A = A_l(f_h/f_l)^{-1}$ is the PSD amplitude at the high-frequency break $f_h = 4 \times 10^{-6}$ Hz.
+We adopt the best-fit Monte Carlo results from \cite{Markowitz2005ApJ} Table $2$ and set the slope value $\beta = 2.6$ as well as the power amplitude $A = 7200 \, \rm Hz^{-1}$ to simulate the source light curve with variability in the energy band of $0.2-12$ keV.
+%The simulated light curve shows clear variability on $\rm 2.5 \times 10^{5} s - 5 \times 10^{6}s $.
+The range between $\rm 2.5 \times 10^5 \, s$ and $\rm 5 \times 10^6 \, s$ becomes the typical timescale where high fluctuation occurs.
+
+
+
+Figure \ref{fig:lc_amplitude} shows that the relative root-mean-square fluctuations decrease significantly as the binning time (hereafter $t_{\rm bin}$) increases from $10^{5}$ to $ 10^{7} \rm \, s$, while the variations on timescale $\rm \leq 10^4 \, s$ remain nearly constant. 
+Therefore, we 1) sample the light curve with bin size of $\rm 10^4 \, s$ and length of $\rm 10^{10} \, s$ or approximately $ 10^6 \, t_{\rm bin}$, 2) and rebin the light curve to $10^5$ and/or $10^6 \, \rm s$ bins for simulations with lower gas densities.
+For any densities of interest, the sampling time bin $t_{\rm bin}$ is shorter than the typical recombination timescale of the WA.
+%depending on a) not much variabilities $\rm \approx 10^4 s$, b)good spectra, c) shorter than the typical $ t_{\rm rec}$ of the WA and duration simulation timescale.
+
+
+%===========================
+% Fig: ngc 3783 lc amplitue
+
+%===========================
+
+
+%\textcolor{red}{Q1: in my last script version, I set the minimum tim bisize= $\rm 10^{4} s$ instead of $\rm 10^{3} s$, Are there difference between these two ways? Do I need to correct it and re-calculate it again?}
+%%-- v1 before Jelle feedback.
+%To simulate the light curve of luminosity using this PSD shape, we set the minimum time binsize ($\rm t_{bin}$) to $\rm 10^4 s$ following the principle of $\rm t_{bin} << t_{var}$ so that the variability can be sufficiently sampled.
+%Figure \ref{fig:lc_E4} show the NGC 3783 simulated light curve of $\rm t_{bin}$ of $\rm 10^{4} s$ in the $\rm 0.2 - 12 keV$ as an example.
+%In detail, we set the minimum time binsize $\rm t_{bin} = 10^4 \rm s$, then the total duration timescale of the simulated light curve =$\rm 1024*128*8*t_{bin}$. 
+%Using the simulated light curve, we calculate the mean of all the simulated flux and set it as the initial flux where the simulated light curve starts.
+%We also have the simulated light curve with $\rm t_{bin} = 10^5, 10^6 \rm s$ by adjust the bin factor to rebin the produced simulated light curve of $\rm t_{bin} = 10^4 s$.
+%The reason we set the minimum time bin size to $10^4$s is based on the fact that it is satisfied with the condition of $\rm t_{bin} << t_{var}$ and that a time bin of $\rm 10^{4}s$ is in general sufficient for a time-resolved spectroscopy using the current observation data
+%\textcolor{red}{($10^4 \rm s \, about \, 10^5 \, counts$ in X-ray observation? which paper to cite?)}.
+%The re-bin operation based on $\rm t_{bin}$ is to obey the PSD shape of equation \ref{equ:psd} which shown relative small amplitude when time bin size is large(see Fig.1 of \citealp{Markowitz2005ApJ}).
+%Also $\rm t_{bin}$ of $10^5$s and $10^6$s are at the peak of the power spectrum, and when the time larger than $5 \times 10^6$s, the slope of the PSD shape is equal to 0.
+%%%%
+%-------------------------------------------------------------------------------
+\subsection{10 WA components }\label{subsect:WA 10 componets prototype}
+
+
+We use the modelling based on the extensive observations with Chandra and XMM-Newton \citep{Mehdipour2017A&A}.
+By analyzing the archival Chandra and XMM-Newton grating data taken in $2000$, $2001$ and $2013$ when the AGN was in an unobscured state, \cite{Mao2019A&A} found $9$ photoionized absorption components with different ionization parameters and kinematics. 
+We incorporate them as components $1-9$ in our current work.
+In the obscured state of the December $2016$ data, \cite{Mehdipour2017A&A} find evidence of a strong high-ionisation component (abbreviation HC in their Fig. 4), which is designated as component $0$ in our present work. 
+AGN SEDs do not normally change their shape a lot, unless there is strong X-ray obscuration, like in the above case. 
+But the component $0$, due to its high-ionization state, is likely located near the center and therefore is not shielded by the obscurer. 
+So it is reasonable to assume that both component $0$ and components $1-9$ experience the same unobscured SED.
+
+
+%Thereby the 10 WA \textbf{components are} following the same unobscured SED as shown in Fig \ref{fig:sed} and we collect these WA components properties in Table \ref{table:pion good-fit par} (i.e. Table. 1 of \citealp{Mehdipour2017A&A} \& Table. 3 of \citealp{Mao2019A&A}) which can be the initial parameters of TPHO calculation in Sect \ref{subsect:TPHO calc.} as well as PION.
+Table \ref{table:pion good-fit par} shows the parameters of the $10$ WA components obtained with the \texttt{pion} model of SPEX. We use them as initial conditions for our \texttt{tpho} calculations.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\subsection{Recombination timescale}
+%We execute \textbf{PION} first to calculate the thermal stability of NGC 3783 source and then to calculate individually where the 10 WA components is in the panel of 
+%To provide insight into the initial states of the system, we utilise the PION model to plot a balanced solution of 10 components on a logT - log$\Xi$ thermal stability. 
+Photoionization or recombination of the ionized gas in response to changes in the ionising continuum will occur.
+For each specific ion $ X_{\rm i}$, the recombination timescale $t_{\rm rec}$ is the time that gas needs to respond to a decrease of the continuum.
+It depends on the local density and the ion population, following the equation (\citealp{Bottorff2000ApJ}, \citealp{Ebrero2016A&A}):
+
+
+where $\alpha_r(X_{\rm i})$ is the recombination rate from ion $ X_{\rm i-1}$ to ion $X_{\rm i}$, and $ f(X_{\rm i})$ is the fraction of element $ X $ at the ionization level $i$. 
+The recombination rates $ \alpha_r$ are known from atomic physics, and the fractions $f$ can be determined from the ionization balance of the source.
+$n_{\rm e}$ is the electron density.
+
+
+For a cloud with known ionization structure, \(  t_{\rm rec} \propto 1/n_{\rm e}\).
+We show in Table \ref{table: ion column density} the column densities of the most relevant ions for each WA component, calculated using the model presented in Table \ref{table:pion good-fit par} in an equilibrium state.
+\cite{Ebrero2016A&A} use the ionic column densities of these most important ions to compute $ n_{\rm e} \times t_{\rm rec}$, and they averaged the $ n_{\rm e} \times t_{\rm rec}$ of all used ion to estimate it for the relevant WA component.
+The recombination timescale is defined this way through Eq. \ref{equ:trec}, however, changes sign near the ion with the highest relative concentration and becomes very large in the absolute value.
+This makes this definition of the recombination timescale not very useful.
+%But near the peak concentrations the quantity of differentiating ion concentration with respect to time equals zero, which thus making the time scale very large and unrealistic.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+Hence we simply define the recombination time scale of an element by the time that the ionized plasma needs to change the average charge of the element by one charge state, namely:
+
+The average charge $ C$ is defined by
+
+and
+
+where the denotation of $f(X_{\rm i})$ and $\alpha_{r}(X_{i})$ are same as shown in the Eq. \ref{equ:trec}.
+%Here the time scale $ t_{C}$ means that ionized plasma is needed to change the average charge of the element by one charge state.
+Table \ref{table:t_C and t_rec.} shows examples of $ t_{\rm C}$ and $ t_{\rm rec}$ where consistency between the two values can be seen. 
+Following the above calculation, we replace the previous definition of $t_{\rm rec}$ by $t_{\rm C}$ to characterize the recombination timescale. 
+
+To quantity the relation between $ t_{\rm C}$ and $ n_{\rm e}$, we use the logarithm of their product using the following equation
+
+where we express $t_{\rm C}$ in second and $n_{\rm e}$ in $\rm m^{-3}$.
+%\propto
+%Where the $K(\xi, Z)$ is different constants corresponding to different $\rm log \xi$ and ion population.
+%It means for each WA component with one initial $\rm log \xi$, the $\rm C_{log \xi, ion}$ dependents on which ion we choose. 
+Table \ref{table:the constant value} shows the $K(\xi, Z)$ value for the 10 WA components from a \texttt{pion} calculation using Eq. \ref{equ:trec from ave-char} for Fe, S, Si, Mg, O, N.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+
+
+
+\subsection{TPHO calculation}\label{subsect:tpho calc.}
+We now apply the \texttt{tpho} model to calculate the time evolution of each WA component of NGC 3783.
+Starting point of the \texttt{tpho} calculation is an equilibrium solution which can be obtained from the \texttt{pion} model, ideally using the luminosity averaged over the entire simulation.
+Figure \ref{fig:lc_E4} shows the simulated light curve with a $t_{\rm bin}$ of $10^{4}$ s, $512$ data points resulting in a duration of $5.12 \times 10^{6} \rm \, s$.
+%
+The initial parameters, such as ionization parameter $\xi$ and column density $ N_{\rm H}$, are taken from Table \ref{table:pion good-fit par}. 
+%Here we collect these useful parameters value to Table\ref{table:pion good-fit par} adding the outflow velocity.
+We explore a range of hydrogen number density ($ n_{\rm H}$) from $10^8 \, \rm m^{-3}$ to $10^{15} \, \rm m^{-3}$.
+
+
+%============================
+%  Fig: ngc 3783 lc
+%
+
+%============================
+
+
+If the photoionized plasma is too far away from the nucleus and/or the density of the plasma is too low, the plasma is in a quasi-steady state with its ionization state varying slightly around the mean value corresponding to the mean ionizing flux level over time; whereas for high density the ion concentration will simultaneously follow the ionizing luminosity variation in a near-equilibrium state (\citealp{Krolik&Kriss1995ApJ}; \citealp{Nicastro1999ApJ}; \citealp{Kaastra2012A&A}; \citealp{Silva2016A&A}).
+Here we select the density range from $10{^8} \, \rm m^{-3}$ to $10^{15} \, \rm  m^{-3}$ that encompasses the steady state, delayed state and nearby equilibrium state (see Sect. \ref{subsect:delayed state}) as follows from our \texttt{tpho} calculation.
+
+
+To further investigate the delayed state and to apply density diagnostics, it is needed to set up the simulation with the following conditions,
+
+It is necessary to have $t_{\rm bin} << t_{\rm var}$, which guarantees that the variability of the ionizing luminosity is sufficiently sampled.
+With $t_{\rm var} << t_{\rm tot}$, each simulation run would then contain multiple ionization-recombination periods to get better constraints.
+As will be addressed below, significant lags between the outflows and the central source are likely to be observed when $t_{\rm var}$ approaches the recombination time $t_{\rm C}$.
+
+To be specific, we use $t_{\rm bin} = 10^4, 10^5, 10^6 \, \rm s$ for density $10^{12}, 10^{11}, 10^{10} \, \rm m^{-3}$, respectively.
+
+
+
+
+
+
+
+%----------------------------------------------------------------------
+\section{Results}\label{sect:3}
+We calculate the thermal stability curve of the $10$ WA components by computing the temperature for a range of $\xi$ values using the \texttt{pion} model made with our SED.
+%Then we change log$\xi$ initial value from -7 to 5.0 and make other parameters in default as the \emph{pion} have in order to get a array of logT-log$\Xi$ panel (i.e. "S" curve) as Figure \ref{fig:scurve} black curve shown.
+%In Figure \ref{fig:scurve}, $\rm T_e$ is the electron temperature, and $\Xi$ represents 
+From this, we determine the pressure ionization parameter, the ratio of radiation pressure to gas pressure, 
+$\Xi$ defined as (\citealp{Krolik1981ApJ})
+
+The shape of this curve in general depends on the precise form of the incoming X-ray spectrum.
+In this equation, $p$ is the gas pressure, $c$ is the speed of light, $k$ is the constant of Boltzmann, and $T$ is the electron temperature.
+Figure \ref{fig:scurve} shows a plot of $\rm log \it T$ versus $\rm log \Xi$.
+Note that in general for a single value of $\Xi$ more temperature solutions are possible (in particular when log$\Xi$ is close to $1$).
+Only solutions with $dT / d\Xi > 0$ are stable.
+Hence it seems that components $1$ and $4$ are in an unstable state.
+
+
+%============================
+%  Fig: density vs. xil
+%
+
+%============================
+
+
+
+Using the light curve described in Sect. \ref{subsect:lc} and the SED described in Sect. \ref{subsect:sed}, we apply the \texttt{tpho} model for a range of densities for each WA component.
+The ion concentration is changing over time because the gas ionises when the flux rises, and recombines when the flux goes down. 
+The recombination is responsible for the lag between the light curve and the ion concentration variability. 
+We also investigate the relationship between density and lag time scales to further characterize this phenomenon.
+Here we present the Component 0 results in more detail as an example.
+
+
+
+\subsection{Delayed state in ion concentration}\label{subsect:delayed state}
+
+Due to its high ionization state, Component $0$ predominately produces absorption lines in the Fe-K band, hence we focus on Fe.
+We use the light curve with $ t_{\rm bin}=10^4 \, \rm s$ for the density ranging from $10^8 \, \rm m^{-3}$ to $10^{15} \, \rm m^{-3}$ in this section.
+
+
+%In Fig. \ref{fig:Fe_last6_3nH}, for the top two rows panels, we plot the \ion{Fe}{XXVII} to \ion{Fe}{XXIV} concentration as a function of time.  
+%The \ion{Fe}{XXVII} ion concentration shows clear variability at $1 \times 10^{12} \rm m^{-3}$ which seems to follow the evolution of the light curve with a lag.
+%This lag is more visible when the ionising flux decreases.
+%For a relatively low density of $1 \times 10^{10} \rm m^{-3} $, the \ion{Fe}{XXVII} ion concentration exhibits almost no variability.
+%And for a higher density of $1 \times 10^{14} \rm m^{-3}$ , the variability of \ion{Fe}{XXVII} become well synchronized with the light curve as shown in this Figure.
+%The \ion{Fe}{XXVI} - \ion{Fe}{XXIV}, ion concentrations exhibit inverse pattern and lagged state.
+%Following Eq. \ref{equ:trec}, the \ion{Fe}{XXVI} concentration is affected both by recombining into \ion{Fe}{XXV}, and ionizing into \ion{Fe}{XXVII}.
+%The last panel of Fig. \ref{fig:Fe_last6_3nH} shows the time-evolved electron temperature $T$ profile for three different densities same as above. 
+%Both time-evolved ion concentration and temperature show the same behaviour going through low, moderate and high densisy, which are also in agreement with the calculation of \cite{Rogantini2022ApJ} shown.
+
+
+
+Fig \ref{fig:Fe_last6_3nH} shows the ion concentrations of the most importannt Fe ions and the temperature as a function of time for three different densities. When the luminosity increases, the \ion{Fe}{XXVII} concentration increases, of the expense of \ion{Fe}{XXIV} - \ion{Fe}{XXVI} due to conservation of the total number of Fe nuclei.
+
+
+For a density of $1 \times 10^{12} \, \rm m^{-3}$, the \ion{Fe}{XXVII} ion concentration shows clear lag with respect to the light curve.
+The lag arises mainly from the recombination timescale of the plasma, which depends inversely on the density (see Eq. \ref{equ:trec}).
+Therefore with increasing density, the \ion{Fe}{XXVII} ion concentration (from blue, red to orange curve) will correspond to smaller lag timescale. For a higher density of $1 \times 10^{14} \rm \, m^{-3}$ , the variability of \ion{Fe}{XXVII} becomes well synchronized with the light curve.
+That is also the reason why the ion concentrations show smoother appearance from high to low density.
+And the standard deviation amplitude of \ion{Fe}{XXVII} for $10^{10}, 10^{12}, 10^{14} \, \rm m^{-3}$, is $0.007$, $0.14$ and $0.27$ respectively.
+
+
+%\textbf{The smoother of \ion{Fe}{XXVII} ion concentration in lower density (red) than the higher (orange) results from the decrease of amplitude of ionizing flux, which following the relation of \( \Delta F_{\rm ion} = \frac{1}{4 \pi} n_{e} \xi\) in TPHO simulation.So for the 
+%}
+
+In Fig. \ref{fig:Fe_last6_3nH}, the last panel shows the time-evolved electron temperature $T$ profile.
+For low density, e.g. $10^{10}, 10^{12} \, \rm m^{-3}$, there are no variations and the temperature is constant over time, because cooling rate almost equals the heating rate within the duration of the light curve.
+For higher density, e.g. $10^{14} \, \rm m^{-3}$, the electron temperature lags due to the cooling time $\sim 10^6 \, \rm s$.
+Both time dependencies of the ion concentration and electron temperature are in agreement with \cite{Rogantini2022ApJ} (see their Figure $7 \, \& \, 8$).
+
+
+
+
+%============================
+%  Fig: Fe ionCon 3nH
+%
+
+%============================
+
+
+
+
+
+
+
+
+
+\subsection{ Density-dependent lag}\label{subsect:density-dependent lag}
+The lag between the ionizing luminosity and ion concentration as shown in Fig. \ref{fig:Fe_last6_3nH} is caused by delayed recombination.
+To quantify the lag in our current work, we determine the cross-correlation function (CCF) between the average charge of Fe and the ionizing luminosity as shown in Fig. \ref{fig:ccf_char-lumi}. 
+The Fe average charge $C_{\rm Fe}$ is derived using Eq. \ref{equ:ave-char} for each time bin. 
+The ionizing luminosity $L$ is also the value for each time bin.
+For both quantities, we calculate the relative variation by subtracting the long-term average.
+The CCF is a measure of the similarity of two series as a function of the displacement of one relative to the other as shown in the following equation: 
+
+%Where $f$ and $g$ are discrete functions which can be replaced by luminosity and ion concentration, 
+$\Delta t$ is defined as the displacement, also known as the lag.
+We compute the CCF using the procedure of the website of Scipy-correlation \footnote[1]{https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.corr
+elation$\_$lags.html}
+%\href{https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.correlation_lags.html}{Scipy-correlation} 
+between the quantity \( (C_{\rm j} - \overline{C})_{\rm Fe} \) and mean-subtracted ionizing luminosity (\( L_{\rm j} - \overline{L}\)).
+$\overline{C}$ and $\overline{L}$ here are the average value calculated from all bins.
+We take the lag value corresponding to the largest correlativity for each calculation (see red curve at the bottom of Fig. \ref{fig:ccf_char-lumi}).
+
+Figure \ref{fig:ccf_char-lumi} shows the CCF for a hydrogen number density of $10^{12} \, \rm m^{-3}$ and component 0. 
+We see here a lag timescale of $5 \times 10^{4} \, \rm s$ (16 hours or more than half a day) for a density of $\rm 10^{12} \, m^{-3}$.
+There are lag timescale of $1 \times 10^{6}, 2 \times 10^{5} \, \rm s$ for the density of $10^{10}, 10^{11} \, \rm m^{-3}$, respectively. 
+The uncertainties in the simulated light curve, derived from the power spectral density of \cite{Markowitz2005ApJ}, can introduce errors in the lag measurement. 
+To account for this, we perform re-simulations of the light curves by considering the errors in the observed PSD. 
+By comparing the resulting lag times obtained from different light curves, we determine an uncertainty of roughly $10\%$.
+
+%============================
+%  Fig: luminosity vs. average charge(t) 
+%
+
+%============================
+%
+
+
+
+The lag timescale in our work detected by the CCF method is the net effect of the recombination and ionization periods.
+Similar to $t_{\rm rec} \sim 1/n$, the lag timescale decreases with increasing hydrogen number density due to the shorter recombination timescale as shown in the top panel of Figure \ref{fig:lags-lognH-sigma}.
+We fit these three data points (see black dot line) with a power law 
+
+and find $\rm k = -0.651$ and $\rm b = 12.489$.
+Here, we find for Component 0, $t_{lag_{\rm Fe}} \varpropto 1/n_{\rm H}^{0.651}$. 
+The observed lag, which is a result of both recombination and ionization, is described by a power index of less than $1$.
+We take here as a typical minimum useful lag the time scale of $\rm 10^4 \, s$, which is approximately the timescale necessary for relevant AGN observations, i.e. the time needed to obtain a spectrum with sufficient quality. 
+%
+%============================
+%  Fig:  
+%
+
+%============================
+%
+
+
+To scale the amplitude to the mean-substracted average charge, we use root-mean-square \( \rm \sigma_C = \sqrt{\frac{ \sum_{j=1}^{j=n} (C_{\rm j} - \overline{C})^2}{n}} \), where
+$ C_{\rm j}$ means average charge in the $ j^{\rm th}$ time binsize and $ n$ means the numbers of time bins.
+Hence, for each calculation from \texttt{tpho}, we further calculate the $\rm \sigma_C$ of the Fe ion concentration.
+At the bottom of Figure \ref{fig:lags-lognH-sigma}, we show the relation between $\sigma_{C}$ of Fe and hydrogen number density.
+We find that relatively high density corresponds to a relative large $\sigma_C$ value, as well as a shorter lag time.
+We fit these three data points (see black dot line) with a power-law 
+
+and find $\rm k=0.357$ and $\rm b=-5.111$. 
+We assume that we can observe in practice significant change in absorption line spectra where $\sigma_{C_{\rm Fe}} > 0.1$; as for lower densities or longer lags, the amplitude of the charge variations become practically too small for effective measurement.
+$10\%$ serves as an empirical standard. A $10\%$ change in average change for one element corresponds typically to changes of order $10\%$ in the ion concentration and hence ionic column densities and line optical depth. This is approximately true based on the observed Fe ion concentrations reported in \cite{Kaspi2002ApJ}.
+For component $0$, for Fe, we find a density of (about) $\rm 3 \times 10^{11} \,  m^{-3}$ (see the black horizontal line) when $\sigma = 0.1$.
+
+
+
+
+
+From the constraints of lag larger than $10^4 \, \rm s$ and $\sigma_{\rm C}$ larger than $10 \%$, for component $0$ and Fe, lags can be detected for densities roughly between $3 \times 10^{11}$ and $\rm 1 \times 10^{13} \, m^{-3}$.
+
+
+Hence, the above method, dubbed here, \texttt{tpho}-delay method, can be used to constrain the density range of the outflowing wind when the source variability timescale is comparable to the recombination time, i.e. ionized plasma in delayed state.
+The same calculation has been carried out for the other $9$ components.
+
+
+
+
+
+
+
+ 
+
+
+
+\subsection{Constraint on the WA density}\label{subsect:constraint on WA density}
+
+Apart from the constraint that can be obtained from the spectral-timing analysis, i.e. \texttt{tpho}-delay method of Section \ref{subsect:density-dependent lag} in our current work, we take into account other astrophysical conditions.
+A lower limit to the density is obtained by assuming that the thickness ($\Delta r$) of the WA plasma can not exceed its distance ($r$) to the SMBH (\citealp{Krolik2001ApJ}; \citealp{Blustin2005A&A}), namely \( \Delta r \leq r \),
+so we can derive the lower limit of the physical density by:
+
+where $N_{\rm H}$ is the column density.
+
+
+
+The upper limit to the density can be obtained based on the assumption that the outflow velocity $v_{\rm out}$ of the wind is larger than or equal to the escape velocity ($  v_{\rm esc} = \sqrt{ 2 G M_{\rm BH} / r}$ ), e.g. \cite{Blustin2005A&A}. 
+It gives,
+%\[ {v_{esc}^2} = \frac{G \times M_{BH}}{r} \]
+
+Using $M_{\rm BH} = 3 \times 10^7 \, M_{\sun}$ (\citealp{Vestergaard2006ApJ}) and other parameters from Table \ref{table:pion good-fit par}, we compute $n_{\rm H, low}$ and $n_{\rm H, upp}$.
+
+
+
+Following the technique introduced in \cite{Mao2017A&A}, we calculate the ranges of detectable densities using absorption lines from meta-stable levels in C- like ions for NGC $3783$.
+The parameter range covered by this method exhibits dependence on ionization parameter and density, as depicted in the colored rectangles of Figure \ref{fig:summary methods}.
+
+
+
+%============================
+%  Fig: density vs. xil
+%
+
+%============================
+
+
+  
+
+
+Figure \ref{fig:summary methods} shows a comprehensive constraint on the density ranges for all 10 WA components as derived from the methods described above.
+%The numbers in red mark the 10 X-ray components.
+%In the TPHO-delay method calculation, the upper limit of the density range is determined by the minimal lag of $\rm 10^4 s$, while the lower limit is set by the minimal amplitude of Fe charge variation $\sim 0.1$.
+%The red vertical solid lines are the detectable density ranges for all 10 X-ray WAs where ionized plasma is in a delayed state.
+
+
+
+The margins for a failed wind and the forbidden region obtained based on previous observations present the upper and lower limits density for $ V = V_{\rm esc}$ and \(\Delta r = r \), respectively.
+For X-ray component $0$, we find that $ 10^{12.2} < n_{\rm H} < 10^{11.8} \, \rm m^{-3}$ i.e. the lower limit is higher than the upper limit.
+It means that perhaps X-ray component $0$ is a candidate for a failed wind.
+
+
+
+We see that for the components with a relatively narrow physical density range as well as higher ionization parameters, such as components $1 - 4$, the \texttt{tpho}-delay method provides powerful diagnostics for the failed wind scenario. 
+The detectable density range of the \texttt{tpho}-delay method for these components $2 - 5$ covers most of their available physical density range, hence their density can be determined well using our method.
+Starting from component $5$, metastable density works, \ion{Si}{IX} and \ion{S}{XI} can diagnose whether component $5$ is failed wind or not.
+
+
+For components $6-9$ with a relatively broad allowed physical density range and a low ionization parameter,
+we can combine the \texttt{tpho}-delay method with metastable C-like ions to give density constraints in the X-ray band.
+For components $7-9$, we can have a cross-check between \texttt{tpho}-delay and the \ion{Ne}{V} metastable lines. 
+\ion{Mg}{VII} and \ion{Ne}{V} as well as \ion{O}{III} metastable lines also expand the detectable density range for components $6-9$.
+
+
+Gray stars and lines represent the density measurements or lower limit from UV observations using the UV metastable absorption lines (Table $3$ in \citealp{Gabel2005ApJ}). 
+Their ionization parameter $U_{\rm H} = Q_{\rm H} / 4 \pi c n_{\rm H} r^2$ was converted into $\xi$ for the models with the SED and luminosity of \cite{Mehdipour2017A&A}. 
+%We adopt $n_{\rm H} = 1.2 n_e$ considering solar abundance distribution and fully ionized.
+We will discuss UV components further in Section \ref{sect:5}.
+
+
+We note that here we use $t_{lag_{\rm Fe}}$, the lag timescale of the Fe average charge, to give the detectable density range for components at different ionization states.
+However, the other elements would complement Fe in particular for the low ionization components.
+To fully comprehend the behaviour of the WA outflows, we will need to conduct similar calculations for other critical elements, such as C, O, N, Mg and Si, among others.
+
+
+
+
+
+
+
+
+
+
+\subsection{TPHO vs. PION}\label{subsect:TPHO vs. pion}
+
+%============================
+%  Fig: density vs. xil
+
+%============================
+
+
+
+In our current work, we derive the density of ionized plasma using the \texttt{tpho} model.
+In \texttt{tpho} calculations, the $\rm \xi$ value simply scales with the time-dependent luminosity value, assuming that the product $n_{\rm H} \times r^2$ remains constant over time. 
+Thus, 
+
+where $L_{\circ}$ and $\xi_{\circ}$ are the luminosity and ionization parameter at $t = 0$, which is assumed to be in equilibrium state.
+
+
+
+The \texttt{pion} model assumes photoionization equilibrium, and the ionization parameter $\rm \xi$ is obtained by fitting the observed spectra.
+Once the $\rm \xi$ value is known, the ion concentrations of different elements are known and the corresponding elemental average charge is also determined.
+So there is a one-to-one relation of $\xi_{\rm PION}$ to the element average charge in the \texttt{pion} equilibrium state.
+
+
+In the left panels of Figure \ref{fig:pion_tpho}, the black dots represent the $\xi$ values of the \texttt{pion} model that are needed to yield the same Fe average charge value as the $C_{\rm Fe}(t)$ from the \texttt{tpho} simulation, represented by $\xi_{\rm TPHO}(t)$. 
+The red line corresponds to equal values of both quantities. 
+Only a small fraction of data points are located on the red line, which corresponds to the equilibrium state.
+
+
+This figure also shows the limitations of applying an equilibrium (\texttt{pion}) model to a source that in reality has time-dependent photoionization, as represented by the realistic \texttt{tpho} model.
+This holds in particular for periods of low luminosity (low $\xi_{\rm TPHO}(t)$).
+In the right panels of Fig. \ref{fig:pion_tpho}, for example, $n_{\rm H} = 10^{12} \, \rm m^{-3}$, the data point with the lowest $\xi_{\rm TPHO}$ value of $2.75$ (in the log) has an average charge for Fe of $25.4$; if the corresponding spectrum would be fitted with an equilibrium \texttt{pion} model, this average charge would yield $\rm log \xi = 3.5$, a $\xi$ value that is $5.6$ times larger than the \texttt{tpho} value.
+Because the observer would like to use the measured luminosity for this data point to derive the product $n_{\rm H} \times r^2 = L_{\rm ion}/\xi$, both the lower $L$ and larger $\xi$ would lead to an underestimate of $n_{\rm H} \times r^2$ by more than an order of magnitude.
+
+
+
+
+
+
+
+
+
+
+%----------------------------------------------------------------------------
+\section{Discussion}\label{sect:4}
+
+\subsection{NGC $3783$ $10$ WAs geometry distance}
+We use the Eq. \ref{equ:xi defination} to derive the detectable distance based on our lag density relation in current work and compare it with the NGC $3783$ intrinsic structure measured by \cite{GRAVITYCollaboration2021A&A} as shown in Fig. \ref{fig:nH_distance}.
+Component $0$ exhibits a detectable distance very close to the broad line region, while components $1-2$ can be constrained within the host dust structure. Component $1-4$ shows a relatively large detectable distance range, typically within or around $1$ parsec, which corresponds to the torus structure. Additionally, the distances of components $5-9$ are detectable with our method only when they locate outside the torus.
+
+%============================
+%  Fig: density vs. xil
+%
+
+%============================
+
+
+
+\subsection{Correspondence with the UV-X-ray absorbers}
+
+In addition to the $10$ X-ray WAs, there are absorbers detected in UV (\citealp{Kraemer2001ApJ}; \citealp{Gabel2005ApJ}) that exhibit a bit of common features as the chosen X-ray counterpart.
+Figure \ref{fig:summary methods} shows three UV absorbers reported in \cite{Gabel2005ApJ}, in which the component $1$ is composed of two physically distinct regions ($1a$ and $1b$) detected by the difference in covering factor and kinematic structure.
+It denotes that both components $1a$ and $1b$ are assumed that they are colocated based on a decrease in radial velocities of lines in both components together with the same outflowing velocity (bottom panel of Fig. \ref{fig:NH_xil and vout_xil}), while the ionization parameter for component $1b$ derived in the unsaturated red wing of \ion{C}{IV} and \ion{N}{V} is higher than that of $1a$, and therefore component $1b$ has lower density and column density (top panel of Fig. \ref{fig:NH_xil and vout_xil}). 
+The electron density of the lower ionization component $1a$, $\sim 3\times 10^{10} \, \rm m^{-3}$, obtained directly from the individual meta-stable levels, falls in the range where the \texttt{tpho}-delay method, as well as the metastable lines of \ion{Ne}{V}, can provide useful constraints.
+Moreover, UV component $1a$ appears to be intimately linked to the component $9$ in the X-ray.
+Therefore, UV component $1a$ can serve as a calibration for density diagnostic using an X-ray detector.
+
+
+UV components $2$ and $3$ do not have direct estimates of the density and thus are less well constrained than component $1$ (Fig. \ref{fig:summary methods}). 
+The lower limits on their densities are derived based on the basis of the observed variability. 
+The ionization parameters from higher ionization UV absorbers, components $1b$, $2$, and $3$ with $\rm log \xi \sim 0.7$, are close to the X-ray component $7$ with $\rm log \xi \sim 0.6$.
+Nevertheless, the latter has a smaller total column density (Fig. \ref{fig:NH_xil and vout_xil}).
+
+
+%============================
+%  Fig: density vs. xil
+%
+
+%============================
+
+Although the hints mentioned above suggest a possible connection between the UV absorbers and the lowly ionized X-ray counterparts, it is not yet established due to poor X-ray constraints.
+This hypothesis can be addressed through the high-resolution X-ray data that will be obtained with the upcoming XRISM \citep{XRISM2022arXiv220205399X} and Athena missions \citep{Nandra2013arXiv1306.2307N}.
+
+
+
+
+
+
+\subsection{Crossing time}
+X-ray variability from black holes is generally characterized as a red noise process \citep{Uttley2014A&ARv}, which can be contributed by different physical radiation 
+processes \citep{Edward2021iScience}. 
+\cite{Gabel2003ApJ} note that the observed changes in the absorption components could be due to the transverse motion of the clumping wind that moves across the line of sight, except for the intrinsic luminosity variability.
+To determine the potential impact of Keplerian motions on WA variability, we have calculated the crossing time of outflows and compared them with the recombination time.
+
+
+
+The X-ray emitting region has a scale no larger than $20$ gravitational radii \citep{Reis2013ApJL} as shown in the following equation,
+
+Therefore the crossing time $t_{\rm cross}$ can be computed,
+
+where $V_{\rm kepler} = \sqrt{\frac{G \times M_{\rm BH}}{R_{\rm WA}}}$. 
+Substituting Eq. \ref{equ:xi defination} and Eq. \ref{equa:X-ray regin} into Eq. \ref{equa:crossing time}, we come to,
+
+Here $L_{\circ} = 6.36 \times 10^{36} \, \rm W$ (\citealp{Mehdipour2017A&A}), $\xi_{\circ}$ from Table \ref{table:pion good-fit par}.
+
+
+The three timescales in Fig. \ref{fig:tcross}, charge time $t_{C_{\rm Fe}}$, lag timescale $t_{lag_{\rm Fe}}$, crossing time $t_{\rm cross}$, are density-dependent.
+We also present the positions of density constraints from \texttt{tpho}-delay and other methods.
+
+ 
+It shows that the density ranges where our \texttt{tpho}-delay method can offer useful constraints likely satisfy $t_{C_{\rm Fe}} < t_{\rm cross}$.
+This indicates that the transverse motion of the outflows could not have a significant impact on the density diagnostics obtained assuming luminosity variation, i.e. the ionization variation is mainly/likely caused by the variability, not the transverse motions.
+Hence, we consider the \texttt{tpho}-delay methods to be largely valid, even when accounting for the potential variability driven by motion.
+
+%============================
+%  Fig: density vs. xil
+%
+
+%============================
+%\subsection{Uncertainties}
+%ompare the transmission spectra between pion and tpho.
+
+
+\subsection{SED and light curve of NGC 3783}
+
+The AGN SEDs do not normally change their shape a lot unless something dramatic happens: like in changing-look AGN where the accretion rate and the X-ray corona emission decline. 
+Or if there is strong X-ray obscuration, and the difference between the impact of obscured and unobscured SED on the ionization state is significant, as shown in NGC $5548$ \citep{Mehdipour2016A&A}.
+Here, the SED we used is uniformly derived from an unobscured state to study the $10$ WA components ionization state.
+Because the component $0$ is in the obscured state but not shielded by the obscurer, it is reasonable to assume that the same SED can be used for component $0$ and components $1-9$.
+NGC $3783$ is a Seyfert-$1$ galaxy without extreme changing-look accretion events observed until now. 
+So it is reasonable to say that it is the normalization that is mostly changing in an unobscured state. 
+Of course, individual SED components (like the soft excess) show some special variability, but usually this does not cause the shape to change too much such that it would impact photoionization. 
+Thus for \texttt{tpho} to assume that only the normalization of the SED is changing is a good enough approximation in this case. 
+We also note that deriving the variability of the SED shape (with limited data) has its challenges and assumptions which are highly model dependent.
+
+
+\subsection{Comparison with other time-resolved analyses}
+
+Time-dependent photoionization modelling for outflowing winds has been described in other papers, but with different model constructions.
+\cite{Silva2016A&A} and \cite{Juranova2022MNRAS} carry out time-dependent photoionization modeling using pre-calculated runs from Cloudy, assuming equilibrium conditions.
+The \texttt{tpho} model \cite{Rogantini2022ApJ} however takes into account non-equlibrium state conditions and tracks the time-dependency of the heating and cooling process according to the lightcurve of the ionizing SED.
+
+
+%\textbf{The TPHO model of \cite{Rogantini2022ApJ} keeps the SED shape constant while the normalization of the luminosity is able to be changed by following the input light curve.
+%$TPHO considers the cooling and heating process simultaneously, which performs a self-consistent calculation solving the full time-dependent ionization state for all ionic species.}
+
+
+
+We point out that, without considering the non-equilibrium time-dependency of heating and cooling process, to some extent, it will affect the resulting calculation of ion concentration, because recombination rates are not only a function of density but also temperature.
+%The impact of temperature on the reaction timescale is much larger than density somewhere.
+A long light curve history is required for \texttt{tpho} input, and the upcoming new satellite XRISM can provide good spectra to compare with the models. 
+It is expected that \texttt{tpho} can be used to fit the observational data in the case that AGNs SED do not change their shape too much.
+
+
+\section{Conclusions}\label{sect:5}
+
+By utilizing a realistic SED with variability from a realistic PSD, and WA physical parameters based on previous X-ray observations, we performed a theoretical \texttt{tpho} model calculation to investigate the time-dependent photoionization plasma state of 10 WA components of NGC 3783. 
+We have employed cross-correlation calculations to measure the correlation between response lag time and the outflow density for all WA components.
+By doing so, we have determined the ranges of density for which the \texttt{tpho} model can yield practical constraints, and we have compared our results with those obtained from metastable absorptions lines in X-ray and UV bands.
+We further prove that the Keplerian motion would have negligible impact on the density measurement for our range of interest.
+It is expected that our technique will be applied to the new data obtained with upcoming X-ray missions including XRISM and Athena.
+
+
+
+%
+%                                                One column figure
+%----------------------------------------------------------------- 
+  
+  
+  
+  
+%-----------------------------------------------------------------
+
+
+
+
+
+
+% WARNING
+%-------------------------------------------------------------------
+% Please note that we have included the references to the file aa.dem in
+% order to compile it, but we ask you to:
+%
+% - use BibTeX with the regular commands:
+%   \bibliographystyle{aa} % style aa.bst
+%   \bibliography{Yourfile} % your references Yourfile.bib
+%
+% - join the .bib files when you upload your source files
+%-------------------------------------------------------------------
+
+%
+\bibliographystyle{aa} % style aa.bst
+\bibliography{Li_NGC3783.bib}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% add appendix
+%\appendix
+%add table of tlagmin,tlagmax(CFe=0.1) and corresponding to density. 
+
+
+\end{document}
+
+
+
+
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Example below of non-structurated natbib references  
+To use the v8.3 macros with this form of composition of bibliography, 
+the option "bibyear" should be added to the command line 
+"\documentclass[bibyear]{aa}".
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Examples for figures using graphicx
+A guide "Using Imported Graphics in LaTeX2e"  (Keith Reckdahl)
+is available on a lot of LaTeX public servers or ctan mirrors.
+The file is : epslatex.pdf 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%-------------------------------------------------------------
+%                 A figure as large as the width of the column
+%-------------------------------------------------------------
+   
+%
+%-------------------------------------------------------------
+%                                    One column rotated figure
+%-------------------------------------------------------------
+   
+%
+%-------------------------------------------------------------
+%                        Figure with caption on the right side 
+%-------------------------------------------------------------
+   
+%
+%-------------------------------------------------------------
+%                                Figure with a new BoundingBox 
+%-------------------------------------------------------------
+   
+%
+%-------------------------------------------------------------
+%                                      The "resizebox" command 
+%-------------------------------------------------------------
+   
+%
+%-------------------------------------------------------------
+%                                             Two column Figure 
+%-------------------------------------------------------------
+   
+%
+%-------------------------------------------------------------
+%                                             Simple A&A Table
+%-------------------------------------------------------------
+%
+
+%
+%-------------------------------------------------------------
+%                                             Two column Table 
+%-------------------------------------------------------------
+%
+
+%
+%-------------------------------------------------------------
+%                                          Table with notes 
+%-------------------------------------------------------------
+%
+% A single note
+
+%
+% More notes
+%
+
+%
+%-------------------------------------------------------------
+%                                       Table with references 
+%-------------------------------------------------------------
+%
+\begin{table*}[h]
+ \caption[]{\label{nearbylistaa2}List of nearby SNe used in this work.}
+
+\tablebib{(1)~\citet{branch83};
+(2) \citet{phillips87}; (3) \citet{barbon90}; (4) \citet{wells94};
+(5) \citet{mazzali93}; (6) \citet{gomez98}; (7) \citet{kirshner93};
+(8) \citet{patat96}; (9) \citet{salvo01}; (10) \citet{branch03};
+(11) \citet{jha99}.
+}
+\end{table}
+%-------------------------------------------------------------
+%                      A rotated Two column Table in landscape  
+%-------------------------------------------------------------
+
+%-------------------------------------------------------------
+%                      A rotated One column Table in landscape  
+%-------------------------------------------------------------
+
+%
+%-------------------------------------------------------------
+%                              Table longer than a single page  
+%-------------------------------------------------------------
+% All long tables will be placed automatically at the end of the document
+%
+\longtab{
+
+}
+%
+%-------------------------------------------------------------
+%                              Table longer than a single page
+%                                            and in landscape, 
+%                    in the preamble, use: \usepackage{lscape}
+%-------------------------------------------------------------
+
+% All long tables will be placed automatically at the end of the document
+%
+\longtab{
+
+}
+%
+%-------------------------------------------------------------
+%               Appendices have to be placed at the end, after
+%                                        \end{thebibliography}
+%-------------------------------------------------------------
+\end{thebibliography}
+
+
+%
+%
+\end{document}
+
+%
+%-------------------------------------------------------------
+%          For the appendices, table longer than a single page
+%-------------------------------------------------------------
+
+% Table will be print automatically at the end of the document, 
+% after the whole appendices
+
+
+
+%-------------------------------------------------------------
+%                   For appendices and landscape, large table:
+%                    in the preamble, use: \usepackage{lscape}
+%-------------------------------------------------------------
+
+
+
+%%%% End of aa.dem
